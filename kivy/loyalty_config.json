@@ -1,0 +1,4 @@
+{
+    "base_url": "http://yourname.duckdns.org:5000",
+    "api_key":  "your-secret-key"
+}
