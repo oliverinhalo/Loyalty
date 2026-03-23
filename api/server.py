@@ -54,6 +54,8 @@ def init_db():
                 delta      INTEGER NOT NULL,
                 new_total  INTEGER NOT NULL
             );
+
+            INSERT INTO cards(id, creation_date, points) VALUES (0,datetime('now'),50);
         """)
 
 
