@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "LoyaltyCard",
+    "slug": "loyalty-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#11111a"
+    },
+    "android": {
+      "package": "com.jacobsloyalty.app",
+      "permissions": [
+        "android.permission.NFC"
+      ]
+    },
+    "plugins": [
+      "react-native-nfc-manager"
+    ]
+  }
+}
