@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ card_id }} — LoyaltyCard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #11111a;
+      --card:     #1a1a27;
+      --accent:   #4affa0;
+      --accent2:  #1e7a4e;
+      --danger:   #ff5555;
+      --text:     #f0f0f0;
+      --sub:      #8888a0;
+      --input-bg: #22223a;
+      --border:   #33334a;
+      --radius:   14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container { width: 100%; max-width: 440px; }
+
+    /* Top bar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .back-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--sub);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 8px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .card-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    /* Balance card */
+    .balance-card {
+      background: var(--accent2);
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .balance-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(200,255,225,0.7);
+      margin-bottom: 8px;
+    }
+    .balance-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 72px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      transition: color 0.3s;
+    }
+    .balance-number.flash { color: var(--accent); }
+    .balance-pts {
+      font-size: 14px;
+      color: rgba(200,255,225,0.7);
+      margin-top: 6px;
+    }
+
+    /* Actions */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      padding: 14px 10px;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+    }
+    .btn:hover  { filter: brightness(1.12); }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary  { background: var(--accent);   color: #0a0a14; }
+    .btn-green    { background: #28c876;          color: #0a0a14; }
+    .btn-dark     { background: #2a2a3e;          color: var(--text); border: 1px solid var(--border); }
+    .btn-danger   { background: var(--danger);    color: #fff; }
+    .btn-purple   { background: #4a4aaa;          color: #fff; }
+    .btn-ghost    { background: var(--input-bg);  color: var(--sub);  border: 1px solid var(--border); }
+
+    .feedback {
+      text-align: center;
+      font-size: 13px;
+      color: var(--accent);
+      min-height: 20px;
+      transition: opacity 0.3s;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      width: 90%;
+      max-width: 360px;
+    }
+    .modal h2 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .modal input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      padding: 14px 16px;
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .modal input:focus { border-color: var(--accent); }
+    .modal-row { display: flex; gap: 10px; }
+    .modal-row .btn { flex: 1; padding: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="topbar">
+      <a href="/" class="back-btn">← Back</a>
+      <span class="card-tag">#{{ card_id }}</span>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-label">Current Balance</div>
+      <div class="balance-number" id="points">{{ points }}</div>
+      <div class="balance-pts">points</div>
+    </div>
+
+    <div class="section-label">Actions</div>
+    <div class="grid">
+      <button class="btn btn-primary"  onclick="addPoints(1)">＋ 1 Point</button>
+      <button class="btn btn-green"    onclick="openModal('add')">＋ Custom</button>
+      <button class="btn btn-dark"     onclick="openModal('remove')">－ Remove</button>
+      <button class="btn btn-danger"   onclick="confirmReset()">↺ Reset</button>
+      <button class="btn btn-purple"   onclick="openModal('set')">✎ Set Value</button>
+      <button class="btn btn-ghost"    onclick="refresh()">⟳ Refresh</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+  </div>
+
+  <!-- Custom amount modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2 id="modal-title">Add Points</h2>
+      <input type="number" id="modal-input" placeholder="0" min="0">
+      <div class="modal-row">
+        <button class="btn btn-ghost"   onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="modal-confirm" onclick="confirmModal()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CARD_ID = {{ card_id | tojson }};
+    const API_KEY = "";   // leave blank — set in kivy app or via env; web UI is read-only by default
+
+    let currentAction = null;
+
+    function setPoints(n) {
+      const el = document.getElementById('points');
+      el.textContent = n;
+      el.classList.add('flash');
+      setTimeout(() => el.classList.remove('flash'), 600);
+    }
+
+    function setFeedback(msg, color = 'var(--accent)') {
+      const el = document.getElementById('feedback');
+      el.textContent = msg;
+      el.style.color = color;
+      setTimeout(() => el.textContent = '', 3000);
+    }
+
+    async function apiFetch(method, path) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (API_KEY) headers['X-API-Key'] = API_KEY;
+      const res = await fetch(path, { method, headers });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'API error');
+      return data;
+    }
+
+    async function refresh() {
+      try {
+        setFeedback('Refreshing…', 'var(--sub)');
+        const d = await apiFetch('GET', `/view/${CARD_ID}`);
+        setPoints(d.points);
+        setFeedback('✓ Refreshed');
+      } catch(e) { setFeedback(e.message, 'var(--danger)'); }
+    }
+
+    async function addPoints(n) {
+      try {
+        setFeedback(`Adding ${n}…`, 'var(--sub)');
+        const d = await apiFetch('POST', `/add/${CARD_ID}/${n}`);
+        setPoints(d.points);
+        setFeedback(`✓ Added ${n} point${n !== 1 ? 's' : ''}`);
+      } catch(e) { setFeedback(e.message, 'var(--danger)'); }
+    }
+
+    async function confirmReset() {
+      if (!confirm('Reset balance to 0? This cannot be undone.')) return;
+      try {
+        setFeedback('Resetting…', 'var(--sub)');
+        const d = await apiFetch('POST', `/set/${CARD_ID}/0`);
+        setPoints(0);
+        setFeedback('✓ Reset to 0', 'var(--danger)');
+      } catch(e) { setFeedback(e.message, 'var(--danger)'); }
+    }
+
+    const modalTitles = { add: 'Add Points', remove: 'Remove Points', set: 'Set Balance' };
+    const modalColors = { add: 'var(--accent)', remove: 'var(--danger)', set: '#8888ff' };
+
+    function openModal(action) {
+      currentAction = action;
+      document.getElementById('modal-title').textContent = modalTitles[action];
+      document.getElementById('modal-confirm').style.background =
+        action === 'remove' ? 'var(--danger)' :
+        action === 'set'    ? '#4a4aaa' : 'var(--accent)';
+      document.getElementById('modal-input').value = '';
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('modal-input').focus();
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+      currentAction = null;
+    }
+
+    async function confirmModal() {
+      const val = parseInt(document.getElementById('modal-input').value);
+      if (isNaN(val) || val < 0) return;
+      closeModal();
+      try {
+        setFeedback('Updating…', 'var(--sub)');
+        const d = await apiFetch('POST', `/${currentAction}/${CARD_ID}/${val}`);
+        setPoints(d.points);
+        const verbs = { add: `Added ${val}`, remove: `Removed ${val}`, set: `Set to ${val}` };
+        setFeedback(`✓ ${verbs[currentAction]}`, modalColors[currentAction]);
+      } catch(e) { setFeedback(e.message, 'var(--danger)'); }
+    }
+
+    document.getElementById('modal-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') confirmModal();
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

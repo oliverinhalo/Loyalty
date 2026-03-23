@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoyaltyCard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #11111a;
+      --card:     #1a1a27;
+      --accent:   #4affa0;
+      --accent2:  #2db870;
+      --danger:   #ff5555;
+      --text:     #f0f0f0;
+      --sub:      #8888a0;
+      --input-bg: #22223a;
+      --border:   #33334a;
+      --radius:   14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .logo-icon {
+      font-size: 48px;
+      line-height: 1;
+    }
+    .logo h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 22px;
+      color: var(--accent);
+      margin-top: 10px;
+      letter-spacing: -0.5px;
+    }
+    .logo p {
+      color: var(--sub);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 15px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder { color: var(--sub); }
+
+    .btn {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #0a0a14;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:hover  { background: #62ffb0; }
+    .btn:active { transform: scale(0.98); }
+
+    .error {
+      margin-top: 12px;
+      color: var(--danger);
+      font-size: 13px;
+      min-height: 18px;
+      text-align: center;
+    }
+
+    .nfc-hint {
+      text-align: center;
+      color: var(--sub);
+      font-size: 11px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon">◈</div>
+      <h1>LoyaltyCard</h1>
+      <p>Enter your card ID to view your balance</p>
+    </div>
+
+    <div class="card">
+      <label for="card_id">Card ID</label>
+      <input type="text" id="card_id" placeholder="e.g. A1B2C3D4" autofocus>
+      <p class="error" id="err"></p>
+      <button class="btn" onclick="loadCard()">Load Card →</button>
+    </div>
+
+    <p class="nfc-hint">📡 NFC tap support coming soon</p>
+  </div>
+
+  <script>
+    function loadCard() {
+      const id = document.getElementById('card_id').value.trim();
+      const err = document.getElementById('err');
+      if (!id) { err.textContent = 'Please enter a card ID.'; return; }
+      err.textContent = '';
+      window.location.href = `/card/${encodeURIComponent(id)}`;
+    }
+    document.getElementById('card_id').addEventListener('keydown', e => {
+      if (e.key === 'Enter') loadCard();
+    });
+  </script>
+</body>
+</html>

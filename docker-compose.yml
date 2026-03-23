@@ -1,0 +1,11 @@
+services:
+  api:
+    build: ./api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data        # database persists here on the host
+    environment:
+      - API_KEY=change-me-in-production
+      - DB_PATH=data/cards.db
+    restart: unless-stopped
